@@ -46,3 +46,60 @@ class CustomNN(nn.Module):
         out = self.classifier(out)
 
         return out
+    
+
+def train_block(model, train_dataloader, criterion, optimizer, device):
+    model.to(device)
+    model.train()
+
+    total_batch_loss = 0.0
+    correctly_predicted = 0
+    total = 0
+
+    for images, labels in train_dataloader:
+        images = images.to(device)
+        labels = labels.to(device)
+
+        optimizer.zero_grad()
+        output = model(images)
+        loss = criterion(output, labels)
+        loss.backward()
+        optimizer.step()
+
+        total_batch_loss += loss.item()
+        total += len(labels)
+        _,predicted = torch.max(output, 1)
+        correctly_predicted += (predicted == labels).sum().item()
+
+    epoch_loss = total_batch_loss/len(train_dataloader)
+    acc = correctly_predicted/total
+
+    return epoch_loss, acc
+
+
+def val_block(model, valid_dataloader, criterion, device):
+    model.to(device)
+    model.eval()
+
+    total_batch_loss = 0.0
+    correctly_predicted = 0
+    total = 0
+
+    with torch.no_grad():
+        for images, labels in valid_dataloader:
+            images = images.to(device)
+            labels = labels.to(device)
+
+
+            output = model(images)
+            loss = criterion(output, labels)
+
+            total_batch_loss += loss.item()
+            total += len(labels)
+            _,predicted = torch.max(output, 1)
+            correctly_predicted += (predicted == labels).sum().item()
+
+    epoch_loss = total_batch_loss/len(valid_dataloader)
+    acc = correctly_predicted/total
+
+    return epoch_loss, acc
