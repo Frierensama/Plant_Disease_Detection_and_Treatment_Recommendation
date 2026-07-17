@@ -8,9 +8,15 @@ from PIL import Image
 from torchvision import transforms
 from notebooks.Custom_scripts import CustomNN
 import torch
+from dotenv import load_dotenv
+from huggingface_hub import InferenceClient
+from hugging_face_response import gen_response
+
+load_dotenv()
 
 st.set_page_config(page_title='Plant Disease Detection and Treatment Reccomendation 🍀', page_icon='☘️', layout='wide')
 
+HF_TOKEN = os.getenv('hf_token')
 # cnn model load
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 cnn = CustomNN(38)
@@ -22,7 +28,7 @@ menu = st.sidebar.radio(
     [
      'Home',
      'Model Comparision',
-     'Predict Label'
+     'Predict/Treatment'
      ]
 )
 
@@ -113,10 +119,15 @@ elif menu=='Model Comparision':
     st.write('*I have trained pre-trained models with default classification layout (ie. one Linear Layer -- input_features to num_classes). Resnet50 out-performed all models after 10 epochs. for deployment purposes im using my model.*')
     st.dataframe(model_eval_df)
     st.divider()
+    st.header('Traning and Validation')
+    f1,f2 = st.columns(2)
+    f1.metric('Train Size','70295')
+    f2.metric('Validation Size','17572')
+
     st.write('*Mis-Classified Count*')
     st.dataframe(misclassified_df)
 
-elif menu =='Predict Label':
+elif menu =='Predict/Treatment':
     uploaded_file = st.file_uploader("Choose an image", type=["png", "jpg", "jpeg"])
     if uploaded_file is not None:
 
@@ -134,3 +145,7 @@ elif menu =='Predict Label':
         c0.subheader(f'**Predicted Class Accuracy - {per_class_accuracy_df['Accuracy_CNN'][int(pred_label)]:.3f}**')
         c1.image(uploaded_file)
         c2.subheader(f'**Plant Class - {pred}**')
+        st.divider()
+        st.header('Treatment/Suggestion')
+        response = gen_response(pred, hf_token=HF_TOKEN)
+        st.write(f'*{response}*')
