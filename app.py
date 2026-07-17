@@ -9,7 +9,7 @@ from torchvision import transforms
 from notebooks.Custom_scripts import CustomNN
 import torch
 
-st.set_page_config(page_title='Plant Disease Detection and Treatment Reccomendation ☘️', page_icon='☘️', layout='wide')
+st.set_page_config(page_title='Plant Disease Detection and Treatment Reccomendation 🍀', page_icon='☘️', layout='wide')
 
 # cnn model load
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -36,12 +36,11 @@ print(os.getcwd())
 with open('pickle_items/class_names.pkl','rb') as f:
     class_names = pickle.load(f)
 
+# dataframes
 with open('pickle_items/models_eval_df.pkl','rb') as f:
     model_eval_df = pickle.load(f)
-
 with open('pickle_items/misclassified_df.pkl','rb') as f:
     misclassified_df = pickle.load(f)
-
 with open('pickle_items/df_per_class_accuracy.pkl','rb') as f:
     per_class_accuracy_df = pickle.load(f)
 
@@ -109,7 +108,15 @@ if menu == 'Home':
 
     st.write('*I have trained pre-trained models with default classification layout (ie. one Linear Layer -- input_features to num_classes). Resnet50 out-performed all models after 10 epochs. for deployment purposes im using my model.*')
 
-if menu =='Predict Label':
+elif menu=='Model Comparision':
+    st.title('Model Performance Comparison ')
+    st.write('*I have trained pre-trained models with default classification layout (ie. one Linear Layer -- input_features to num_classes). Resnet50 out-performed all models after 10 epochs. for deployment purposes im using my model.*')
+    st.dataframe(model_eval_df)
+    st.divider()
+    st.write('*Mis-Classified Count*')
+    st.dataframe(misclassified_df)
+
+elif menu =='Predict Label':
     uploaded_file = st.file_uploader("Choose an image", type=["png", "jpg", "jpeg"])
     if uploaded_file is not None:
 
@@ -124,6 +131,6 @@ if menu =='Predict Label':
         pred = class_names[pred_label]
         c0,c1 , c2 = st.columns(3)
 
-        c0.metric('**Predicted Class Accuracy**', f'{per_class_accuracy_df['Accuracy_CNN'][int(pred_label)]:.3f}')
+        c0.subheader(f'**Predicted Class Accuracy - {per_class_accuracy_df['Accuracy_CNN'][int(pred_label)]:.3f}**')
         c1.image(uploaded_file)
-        c2.metric('**Plant Class**',pred)
+        c2.subheader(f'**Plant Class - {pred}**')
