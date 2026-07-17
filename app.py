@@ -147,5 +147,6 @@ elif menu =='Predict/Treatment':
         c2.subheader(f'**Plant Class - {pred}**')
         st.divider()
         st.header('Treatment/Suggestion')
-        response = gen_response(pred, hf_token=HF_TOKEN)
-        st.write(f'*{response}*')
+        if st.button('Need Treatment Reccomendations?'):
+            response = gen_response(pred, hf_token=HF_TOKEN)
+            st.write(f'*{response}*')
