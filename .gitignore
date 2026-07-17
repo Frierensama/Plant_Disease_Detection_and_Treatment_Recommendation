@@ -4,6 +4,9 @@ __pycache__/
 *$py.class
 
 /data
+models/dont_use
+pickle_items/dont_use
+/pred
 
 # C extensions
 *.so
