@@ -1,2 +1,12 @@
+streamlit
 torch
-sci
+torchvision
+numpy
+pandas
+matplotlib
+scikit-learn
+opencv-python-headless
+Pillow
+requests
+huggingface_hub
+python-dotenv
