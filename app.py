@@ -116,15 +116,63 @@ if menu == 'Home':
 
 elif menu=='Model Comparision':
     st.title('Model Performance Comparison ')
-    st.write('*I have trained pre-trained models with default classification layout (ie. one Linear Layer -- input_features to num_classes). Resnet50 out-performed all models after 10 epochs. for deployment purposes im using my model.*')
-    st.dataframe(model_eval_df)
+    st.write('*I have trained pre-trained models with default classification layout (ie. one Linear Layer -- input_features to num_classes). **Resnet50** out-performed all models after 10 epochs. for deployment purposes im using my model.*')
+    st.dataframe(model_eval_df.sort_values('Accuracy',ascending=False))
     st.divider()
-    st.header('Traning and Validation')
-    f1,f2 = st.columns(2)
-    f1.metric('Train Size','70295')
-    f2.metric('Validation Size','17572')
 
-    st.write('*Mis-Classified Count*')
+    st.subheader("Custom CNN Architecture")
+    st.markdown("""
+    ```
+    Input Image (3 × 224 × 224)
+            │
+            ▼
+    ──────────────────────────────────────
+    Feature Extraction
+    ──────────────────────────────────────
+    Conv2D (3 → 16, Kernel=3×3, Padding='same')
+    ReLU
+    BatchNorm2D
+    MaxPool2D (2×2)
+
+    Conv2D (16 → 32, Kernel=3×3, Padding='same')
+    ReLU
+    BatchNorm2D
+    MaxPool2D (2×2)
+
+    Conv2D (32 → 64, Kernel=3×3, Padding='same')
+    ReLU
+    BatchNorm2D
+    MaxPool2D (2×2)
+
+    Dropout (0.2)
+
+    ──────────────────────────────────────
+    Classifier
+    ──────────────────────────────────────
+    Flatten
+
+    Linear (50176 → 128)
+    BatchNorm1D
+    ReLU
+    Dropout (0.3)
+
+    Linear (128 → 64)
+    BatchNorm1D
+    ReLU
+    Dropout (0.4)
+
+    Linear (64 → 38)
+
+    ──────────────────────────────────────
+    Output
+    ──────────────────────────────────────
+    38 Plant Disease Classes
+    Softmax (during inference)
+    ```
+    """)
+
+    st.divider()
+    st.header('Mis-Classified Labels ~5-6% pr model')
     st.dataframe(misclassified_df)
 
 elif menu =='Predict/Treatment':
