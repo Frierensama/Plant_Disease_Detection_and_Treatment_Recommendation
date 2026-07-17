@@ -2,6 +2,11 @@
 
 A GenAI-based web-application that detects plant diseases from leaf images using a Convolutional Neural Network (CNN) and generates treatment recommendations using a Hugging Face Large Language Model (LLM).
 
+deployment
+```bash
+https://plant-disease-detection-and-treatment-recommendation-bleh.streamlit.app/
+```
+
 ---
 
 ## Result
