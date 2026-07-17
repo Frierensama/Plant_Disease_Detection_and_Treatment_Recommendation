@@ -6,8 +6,7 @@ __pycache__/
 /data
 models/dont_use
 pickle_items/dont_use
-/pred
-
+/pred/
 # C extensions
 *.so
 
