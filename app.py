@@ -146,7 +146,11 @@ elif menu =='Predict/Treatment':
         c1.image(uploaded_file)
         c2.subheader(f'**Plant Class - {pred}**')
         st.divider()
-        st.header('Treatment/Suggestion')
-        if st.button('Need Treatment Reccomendations?'):
-            response = gen_response(pred, hf_token=HF_TOKEN)
-            st.write(f'*{response}*')
+        if pred.split('___')[1] != 'healthy':
+            st.header('Treatment/Suggestion')
+            if st.button('Need Treatment Reccomendations?'):
+                response = gen_response(pred, hf_token=HF_TOKEN)
+                st.write(f'*{response}*')
+        else:
+            st.header('No disease detected. Healthy plant.')
+            st.write('*I aint gonna waste tokens*')
