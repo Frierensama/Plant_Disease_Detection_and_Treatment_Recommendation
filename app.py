@@ -190,7 +190,7 @@ elif menu =='Predict/Treatment':
         pred = class_names[pred_label]
         c0,c1 , c2 = st.columns(3)
 
-        c0.subheader(f'**Predicted Class Accuracy - {per_class_accuracy_df['Accuracy_CNN'][int(pred_label)]:.3f}**')
+        c0.subheader(f'**Prediction Confidence - {per_class_accuracy_df['Accuracy_CNN'][int(pred_label)]:.3f}**')
         c1.image(uploaded_file)
         c2.subheader(f'**Plant Class - {pred}**')
         st.divider()
