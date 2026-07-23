@@ -11,6 +11,7 @@ import torch
 from dotenv import load_dotenv
 from huggingface_hub import InferenceClient
 from hugging_face_response import gen_response
+import cv2
 
 load_dotenv()
 
@@ -177,6 +178,9 @@ elif menu=='Model Comparision':
 
 elif menu =='Predict/Treatment':
     uploaded_file = st.file_uploader("Choose an image", type=["png", "jpg", "jpeg"])
+    
+    selected_image = st.selectbox('Choose an image', os.listdir(os.getcwd()+'/test'))
+
     if uploaded_file is not None:
 
         # Image processing to (1,3,224,224)
@@ -202,3 +206,29 @@ elif menu =='Predict/Treatment':
         else:
             st.header('No disease detected. Healthy plant.')
             st.write('*I aint gonna waste tokens*')
+
+    if selected_image is not None and uploaded_file is None:
+            uploaded_file = os.getcwd()+'/test/'+selected_image
+            # Image processing to (1,3,224,224)
+            image = Image.open(uploaded_file)
+            img = image_transform(image)
+            img = img.unsqueeze(0)
+    
+            # cnn prediction
+            output = cnn(img)
+            _,pred_label = torch.max(output,axis=1)
+            pred = class_names[pred_label]
+            c0,c1 , c2 = st.columns(3)
+    
+            c0.subheader(f'**Prediction Confidence - {per_class_accuracy_df['Accuracy_CNN'][int(pred_label)]:.3f}**')
+            c1.image(uploaded_file)
+            c2.subheader(f'**Plant Class - {pred}**')
+            st.divider()
+            if pred.split('___')[1] != 'healthy':
+                st.header('Treatment/Suggestion')
+                if st.button('Need Treatment Reccomendations?'):
+                    response = gen_response(pred, hf_token=HF_TOKEN)
+                    st.write(f'*{response}*')
+            else:
+                st.header('No disease detected. Healthy plant.')
+                st.write('*I aint gonna waste tokens*')
